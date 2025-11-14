@@ -47,7 +47,7 @@ async function enviar() {
     adicionarMensagem(texto, "user");
     campo.value = "";
 
-    historico.push(["user", texto]);
+    historico.push({ role: "user", content: texto });
 
     document.getElementById("pensando").style.display = "block";
 
@@ -60,7 +60,7 @@ async function enviar() {
     const dados = await resposta.json();
     const textoResposta = dados.resposta;
 
-    historico.push(["assistant", textoResposta]);
+    historico.push({ role: "assistant", content: textoResposta });
 
     document.getElementById("pensando").style.display = "none";
     adicionarMensagem(textoResposta, "bot");
@@ -69,4 +69,3 @@ async function enviar() {
 
 </body>
 </html>
-
