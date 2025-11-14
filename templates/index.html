@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catequista Virtual</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2 class="titulo">✝️ Catequista Virtual</h2>
+        <p class="subtitulo">Apoio para sua caminhada de fé</p>
+
+        <div id="chat-box" class="chat-box"></div>
+
+        <div class="input-area">
+            <input id="mensagem" type="text" placeholder="Digite sua pergunta aqui..." maxlength="500">
+            <button onclick="enviar()">Enviar</button>
+        </div>
+
+        <div id="pensando" class="pensando">
+            ⏳ A catequista está refletindo...
+        </div>
+
+    </div>
+
+<script>
+let historico = [];
+
+function adicionarMensagem(texto, tipo) {
+    let box = document.getElementById("chat-box");
+    let div = document.createElement("div");
+    div.className = tipo === "user" ? "msg user" : "msg bot";
+    div.innerText = texto;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+}
+
+async function enviar() {
+    const campo = document.getElementById("mensagem");
+    const texto = campo.value.trim();
+    if (!texto) return;
+
+    adicionarMensagem(texto, "user");
+    campo.value = "";
+
+    historico.push(["user", texto]);
+
+    document.getElementById("pensando").style.display = "block";
+
+    const resposta = await fetch("/api/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({historico: historico})
+    });
+
+    const dados = await resposta.json();
+    const textoResposta = dados.resposta;
+
+    historico.push(["assistant", textoResposta]);
+
+    document.getElementById("pensando").style.display = "none";
+    adicionarMensagem(textoResposta, "bot");
+}
+</script>
+
+</body>
+</html>
 
